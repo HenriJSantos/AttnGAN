@@ -104,12 +104,7 @@ class TextDataset(data.Dataset):
             self.imsize.append(base_size)
             base_size = base_size * 2
 
-        self.data = []
-        self.data_dir = data_dir
-        if data_dir.find('birds') != -1:
-            self.bbox = self.load_bbox()
-        else:
-            self.bbox = None
+        self.bbox = None
         split_dir = os.path.join(data_dir, split)
 
         self.filenames, self.captions, self.ixtoword, \
@@ -118,36 +113,12 @@ class TextDataset(data.Dataset):
         self.class_id = self.load_class_id(split_dir, len(self.filenames))
         self.number_example = len(self.filenames)
 
-    def load_bbox(self):
-        data_dir = self.data_dir
-        bbox_path = os.path.join(data_dir, 'CUB_200_2011/bounding_boxes.txt')
-        df_bounding_boxes = pd.read_csv(bbox_path,
-                                        delim_whitespace=True,
-                                        header=None).astype(int)
-        #
-        filepath = os.path.join(data_dir, 'CUB_200_2011/images.txt')
-        df_filenames = \
-            pd.read_csv(filepath, delim_whitespace=True, header=None)
-        filenames = df_filenames[1].tolist()
-        print('Total filenames: ', len(filenames), filenames[0])
-        #
-        filename_bbox = {img_file[:-4]: [] for img_file in filenames}
-        numImgs = len(filenames)
-        for i in xrange(0, numImgs):
-            # bbox = [x-left, y-top, width, height]
-            bbox = df_bounding_boxes.iloc[i][1:].tolist()
-
-            key = filenames[i][:-4]
-            filename_bbox[key] = bbox
-        #
-        return filename_bbox
-
     def load_captions(self, data_dir, filenames):
         all_captions = []
         for i in range(len(filenames)):
             cap_path = '%s/text/%s.txt' % (data_dir, filenames[i])
             with open(cap_path, "r") as f:
-                captions = f.read().decode('utf8').split('\n')
+                captions = f.read().split('\n')
                 cnt = 0
                 for cap in captions:
                     if len(cap) == 0:

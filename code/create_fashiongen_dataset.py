@@ -36,7 +36,7 @@ def create_dataset(file, isTrain):
     for n in range(len(file["index"])):
         filename = "FashionGEN_" + ("train_" if isTrain else "test_") + str(n).zfill(8)
         filenames.append(filename)
-        cv2.imwrite(DATA_PATH + "images/"+filename+".png", cv2.cvtColor(file["input_image"][n], cv2.COLOR_RGB2BGR))
+        cv2.imwrite(DATA_PATH + "images/"+filename+".jpg", cv2.cvtColor(file["input_image"][n], cv2.COLOR_RGB2BGR))
         f = open(DATA_PATH + "text/" + filename + ".txt","w+")
         f.write(clean_string(file["input_description"][n][0]))
         f.close()
